@@ -4,8 +4,8 @@ import Button from "./components/ui/button";
 import Text from "./components/ui/text";
 import PomodoroStatus from "./enum/pomodoro-status.enum";
 
-const FOCUS_MINUTES = 1;
-const NORMAL_BREAK_MINUTES = 1;
+const FOCUS_MINUTES = 25;
+const NORMAL_BREAK_MINUTES = 5;
 const LONG_BREAK_MINUTES = 15;
 const SESSION_NUM = 4;
 const ROUND_NUM = 5;
@@ -89,15 +89,9 @@ export default function HomePage(props: any) {
         </Text>
       </View>
       <Button
-        title="Start"
+        title={pomodoroStatus === PomodoroStatus.None ? "Start" : "Reset"}
         onPress={onStartButtonPressed}
         type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-      />
-      <Button
-        title="Reset"
-        onPress={onStartButtonPressed}
-        type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-        className="mt-2"
       />
     </View>
   );
