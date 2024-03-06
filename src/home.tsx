@@ -4,8 +4,8 @@ import Button from "./components/ui/button";
 import Text from "./components/ui/text";
 import PomodoroStatus from "./enum/pomodoro-status.enum";
 
-const FOCUS_MINUTES = 25;
-const NORMAL_BREAK_MINUTES = 5;
+const FOCUS_MINUTES = 1;
+const NORMAL_BREAK_MINUTES = 1;
 const LONG_BREAK_MINUTES = 15;
 const SESSION_NUM = 4;
 const ROUND_NUM = 5;
@@ -27,6 +27,13 @@ export default function HomePage(props: any) {
   //   setLapStartTime(new Date());
   //   // setPomodoroStatus(PomodoroStatus.Focus);
   // };
+
+  const onResetButtonPressed = () => {
+    setElapsedSeconds(0);
+    setPausedSeconds(0);
+    setLapStartTime(new Date());
+    setPomodoroStatus(PomodoroStatus.None);
+  };
 
   useEffect(() => {
     const monitor = setInterval(() => {
@@ -88,11 +95,15 @@ export default function HomePage(props: any) {
             : ("0" + String(remainingSeconds % 60)).slice(-2)}
         </Text>
       </View>
-      <Button
-        title={pomodoroStatus === PomodoroStatus.None ? "Start" : "Reset"}
-        onPress={onStartButtonPressed}
-        type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-      />
+      {pomodoroStatus === PomodoroStatus.None ? (
+        <Button title="Start" onPress={onStartButtonPressed} type="error" />
+      ) : (
+        <Button
+          title="Reset"
+          onPress={onResetButtonPressed}
+          type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
+        />
+      )}
     </View>
   );
 }
