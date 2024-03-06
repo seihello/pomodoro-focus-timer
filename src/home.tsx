@@ -14,8 +14,9 @@ export default function HomePage(props: any) {
   const [pomodoroStatus, setPomodoroStatus] = useState(PomodoroStatus.None);
   // const [initialStartTime, setInitialStartTime] = useState<Date>(new Date());
   const [lapStartTime, setLapStartTime] = useState<Date>(new Date());
+  const [pausedTime, setPausedTime] = useState<Date | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [pausedSeconds, setPausedSeconds] = useState(0);
+  const [pausedMillSeconds, setPausedMillSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   const onStartButtonPressed = () => {
@@ -23,22 +24,35 @@ export default function HomePage(props: any) {
     setPomodoroStatus(PomodoroStatus.Focus);
   };
 
-  // const onPauseButtonPressed = () => {
-  //   setLapStartTime(new Date());
-  //   // setPomodoroStatus(PomodoroStatus.Focus);
-  // };
+  const onPauseButtonPressed = () => {
+    setIsPaused(true);
+    setPausedTime(new Date());
+  };
+
+  const onResumeButtonPressed = () => {
+    if (pausedTime) {
+      setPausedMillSeconds(
+        pausedMillSeconds + (new Date().getTime() - pausedTime.getTime()),
+      );
+    }
+    setIsPaused(false);
+    setPausedTime(null);
+  };
 
   const onResetButtonPressed = () => {
     setElapsedSeconds(0);
-    setPausedSeconds(0);
+    setPausedMillSeconds(0);
     setLapStartTime(new Date());
+    setPausedTime(null);
+    setIsPaused(false);
     setPomodoroStatus(PomodoroStatus.None);
   };
 
   useEffect(() => {
     const monitor = setInterval(() => {
-      if (pomodoroStatus === PomodoroStatus.None) return;
-      const elapsedMilliSeconds = new Date().getTime() - lapStartTime.getTime();
+      if (pomodoroStatus === PomodoroStatus.None || isPaused) return;
+      const elapsedMilliSeconds =
+        new Date().getTime() - lapStartTime.getTime() - pausedMillSeconds;
 
       const elapsedSeconds = Math.floor(elapsedMilliSeconds / 1000);
 
@@ -47,6 +61,7 @@ export default function HomePage(props: any) {
         elapsedSeconds >= FOCUS_MINUTES * 60
       ) {
         setElapsedSeconds(0);
+        setPausedMillSeconds(0);
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Break);
       } else if (
@@ -54,6 +69,7 @@ export default function HomePage(props: any) {
         elapsedSeconds >= NORMAL_BREAK_MINUTES * 60
       ) {
         setElapsedSeconds(0);
+        setPausedMillSeconds(0);
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Focus);
       } else {
@@ -64,7 +80,7 @@ export default function HomePage(props: any) {
     return () => {
       clearInterval(monitor);
     };
-  }, [lapStartTime, setElapsedSeconds]);
+  }, [lapStartTime, setElapsedSeconds, isPaused, pausedTime, pomodoroStatus]);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
@@ -97,13 +113,25 @@ export default function HomePage(props: any) {
       </View>
       {pomodoroStatus === PomodoroStatus.None ? (
         <Button title="Start" onPress={onStartButtonPressed} type="error" />
+      ) : isPaused ? (
+        <Button
+          title="Resume"
+          onPress={onResumeButtonPressed}
+          type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
+        />
       ) : (
         <Button
-          title="Reset"
-          onPress={onResetButtonPressed}
+          title="Pause"
+          onPress={onPauseButtonPressed}
           type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
         />
       )}
+      <Button
+        title="Reset"
+        onPress={onResetButtonPressed}
+        type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
+        className="mt-2"
+      />
     </View>
   );
 }
