@@ -62,7 +62,7 @@ export default function HomePage(props: any) {
   };
 
   const onSettingIconPressed = () => {
-    setIsSettingOpen(true);
+    setIsSettingOpen(!isSettingOpen);
   };
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function HomePage(props: any) {
     >
       <TouchableOpacity
         onPress={onSettingIconPressed}
-        className="absolute right-6 top-16"
+        className="absolute right-6 top-16 z-20"
         activeOpacity={0.9}
       >
         <Icon name="settings-sharp" color="#FFFFFF" size={32} />
