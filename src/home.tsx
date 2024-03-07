@@ -24,9 +24,11 @@ export default function HomePage(props: any) {
   const [pomodoroStatus, setPomodoroStatus] = useState(PomodoroStatus.None);
   const [lapStartTime, setLapStartTime] = useState<Date>(new Date());
   const [pausedTime, setPausedTime] = useState<Date | null>(null);
+
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [pausedMillSeconds, setPausedMillSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [completedSessionCount, setCompletedSessionCount] = useState(0);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
 
   const onStartButtonPressed = () => {
@@ -34,7 +36,8 @@ export default function HomePage(props: any) {
     setPomodoroStatus(PomodoroStatus.Focus);
 
     setUsedFocusMinutes(focusMinutes);
-    setUsedShortBreakMinutes(usedFocusMinutes);
+    setUsedShortBreakMinutes(shortBreakMinutes);
+    setUsedLongBreakMinutes(longBreakMinutes);
   };
 
   const onPauseButtonPressed = () => {
@@ -58,6 +61,7 @@ export default function HomePage(props: any) {
     setLapStartTime(new Date());
     setPausedTime(null);
     setIsPaused(false);
+    setCompletedSessionCount(0);
     setPomodoroStatus(PomodoroStatus.None);
   };
 
@@ -82,17 +86,24 @@ export default function HomePage(props: any) {
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Break);
         setUsedFocusMinutes(focusMinutes);
-        setUsedShortBreakMinutes(usedFocusMinutes);
+        setUsedShortBreakMinutes(shortBreakMinutes);
+        setUsedLongBreakMinutes(longBreakMinutes);
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
-        elapsedSeconds >= usedShortBreakMinutes * 60
+        (((completedSessionCount + 1) % 4 === 0 &&
+          elapsedSeconds >= usedLongBreakMinutes * 60) ||
+          ((completedSessionCount + 1) % 4 !== 0 &&
+            elapsedSeconds >= usedShortBreakMinutes * 60))
       ) {
         setElapsedSeconds(0);
         setPausedMillSeconds(0);
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Focus);
         setUsedFocusMinutes(focusMinutes);
-        setUsedShortBreakMinutes(usedFocusMinutes);
+        setUsedShortBreakMinutes(shortBreakMinutes);
+        setUsedLongBreakMinutes(longBreakMinutes);
+
+        setCompletedSessionCount(completedSessionCount + 1);
       } else {
         setElapsedSeconds(elapsedSeconds);
       }
@@ -102,19 +113,25 @@ export default function HomePage(props: any) {
       clearInterval(monitor);
     };
   }, [
+    pomodoroStatus,
+    focusMinutes,
+    shortBreakMinutes,
+    longBreakMinutes,
+    usedFocusMinutes,
+    usedShortBreakMinutes,
+    usedLongBreakMinutes,
     lapStartTime,
     setElapsedSeconds,
     isPaused,
     pausedTime,
-    pomodoroStatus,
-    usedFocusMinutes,
-    usedShortBreakMinutes,
   ]);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
       ? usedFocusMinutes
-      : usedShortBreakMinutes;
+      : (completedSessionCount + 1) % 4 === 0
+        ? usedLongBreakMinutes
+        : usedShortBreakMinutes;
   const remainingSeconds = LAP_MINUTES * 60 - elapsedSeconds;
 
   return (
