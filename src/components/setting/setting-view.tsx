@@ -36,12 +36,18 @@ export default function SettingView({
   );
 
   const onSubmitButtonPressed = () => {
-    setFocusMinutes(tempFocusMinutes === "" ? 25 : tempFocusMinutes);
+    setFocusMinutes(
+      tempFocusMinutes === "" || tempFocusMinutes <= 0 ? 25 : tempFocusMinutes,
+    );
     setShortBreakMinutes(
-      tempShortBreakMinutes === "" ? 5 : tempShortBreakMinutes,
+      tempShortBreakMinutes === "" || tempShortBreakMinutes <= 0
+        ? 5
+        : tempShortBreakMinutes,
     );
     setLongBreakMinutes(
-      tempLongBreakMinutes === "" ? 15 : tempLongBreakMinutes,
+      tempLongBreakMinutes === "" || tempLongBreakMinutes <= 0
+        ? 15
+        : tempLongBreakMinutes,
     );
 
     setIsOpen(false);
