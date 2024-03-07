@@ -144,11 +144,11 @@ export default function HomePage(props: any) {
           setIsOpen={setIsSettingOpen}
         />
       )}
-      <Text className="my-24 ml-2 text-center font-dm-bold text-6xl text-white">
+      <Text className="my-24 ml-2 py-4 text-center font-dm-bold text-4xl text-white">
         {pomodoroStatus === PomodoroStatus.Focus
-          ? "Focus!"
+          ? "作業がんばりましょう"
           : pomodoroStatus === PomodoroStatus.Break
-            ? "Take a break!"
+            ? "休憩しましょう"
             : " "}
       </Text>
       <View className="my-2 flex flex-row justify-center">
@@ -167,22 +167,22 @@ export default function HomePage(props: any) {
         </Text>
       </View>
       {pomodoroStatus === PomodoroStatus.None ? (
-        <Button title="Start" onPress={onStartButtonPressed} type="error" />
+        <Button title="開始" onPress={onStartButtonPressed} type="error" />
       ) : isPaused ? (
         <Button
-          title="Resume"
+          title="再開"
           onPress={onResumeButtonPressed}
           type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
         />
       ) : (
         <Button
-          title="Pause"
+          title="一時停止"
           onPress={onPauseButtonPressed}
           type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
         />
       )}
       <Button
-        title="Reset"
+        title="最初から"
         onPress={onResetButtonPressed}
         type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
         className="mt-2"

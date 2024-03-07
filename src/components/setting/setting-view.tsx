@@ -57,19 +57,19 @@ export default function SettingView({
     <View className="absolute z-10 flex h-screen w-screen flex-row items-center justify-center px-4 pb-24 pt-32">
       <View className="shadow-1 flex w-full flex-col justify-center rounded-xl bg-gray-100 px-4 py-8">
         <SettingInput
-          label="Focus minutes"
+          label="作業時間"
           value={tempFocusMinutes}
           setValue={setTempFocusMinutes}
           pomodoroStatus={pomodoroStatus}
         />
         <SettingInput
-          label="Short break minutes"
+          label="休憩時間(短)"
           value={tempShortBreakMinutes}
           setValue={setTempShortBreakMinutes}
           pomodoroStatus={pomodoroStatus}
         />
         <SettingInput
-          label="Long break minutes"
+          label="休憩時間(長)"
           value={tempLongBreakMinutes}
           setValue={setTempLongBreakMinutes}
           pomodoroStatus={pomodoroStatus}
