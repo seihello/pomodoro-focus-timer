@@ -170,7 +170,7 @@ export default function HomePage(props: any) {
             : " "}
       </Text>
       <View className="my-2 flex flex-row justify-center">
-        <Text className="w-32 py-2 text-right font-dm-bold text-8xl tracking-widest text-white">
+        <Text className="w-36 py-2 text-right font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
             ? ("0" + String(focusMinutes)).slice(-2)
             : ("0" + String(Math.floor(remainingSeconds / 60))).slice(-2)}
@@ -178,7 +178,7 @@ export default function HomePage(props: any) {
         <Text className="w-8 py-2 text-center font-dm-bold text-8xl text-white">
           :
         </Text>
-        <Text className="w-32 py-2 text-left font-dm-bold text-8xl tracking-widest text-white">
+        <Text className="w-36 py-2 text-left font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
             ? "00"
             : ("0" + String(remainingSeconds % 60)).slice(-2)}
