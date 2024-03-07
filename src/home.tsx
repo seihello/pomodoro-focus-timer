@@ -119,7 +119,7 @@ export default function HomePage(props: any) {
 
   return (
     <View
-      className={`relative flex h-screen w-full flex-col justify-center px-4 pt-16 ${
+      className={`relative flex h-screen w-full flex-col px-4 pt-16 ${
         pomodoroStatus === PomodoroStatus.Break
           ? "bg-primary-900"
           : "bg-error-500"
@@ -144,16 +144,23 @@ export default function HomePage(props: any) {
           setIsOpen={setIsSettingOpen}
         />
       )}
-      <View className="flex flex-row justify-center">
-        <Text className="w-24 py-2 text-right font-dm-bold text-6xl tracking-widest text-white">
+      <Text className="my-24 ml-2 text-center font-dm-bold text-6xl text-white">
+        {pomodoroStatus === PomodoroStatus.Focus
+          ? "Focus!"
+          : pomodoroStatus === PomodoroStatus.Break
+            ? "Take a break!"
+            : " "}
+      </Text>
+      <View className="my-2 flex flex-row justify-center">
+        <Text className="w-32 py-2 text-right font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
             ? ("0" + String(focusMinutes)).slice(-2)
             : ("0" + String(Math.floor(remainingSeconds / 60))).slice(-2)}
         </Text>
-        <Text className="w-8 py-2 text-center font-dm-bold text-6xl text-white">
+        <Text className="w-8 py-2 text-center font-dm-bold text-8xl text-white">
           :
         </Text>
-        <Text className="w-24 py-2 text-left font-dm-bold text-6xl tracking-widest text-white">
+        <Text className="w-32 py-2 text-left font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
             ? "00"
             : ("0" + String(remainingSeconds % 60)).slice(-2)}
