@@ -80,7 +80,7 @@ export default function SettingView({
           activeOpacity={0.9}
         >
           <Text className="flex w-auto flex-row items-center justify-center font-dm-bold text-2xl text-white">
-            OK
+            変更
           </Text>
         </TouchableOpacity>
       </View>

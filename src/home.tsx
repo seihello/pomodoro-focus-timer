@@ -127,10 +127,11 @@ export default function HomePage(props: any) {
     >
       <TouchableOpacity
         onPress={onSettingIconPressed}
-        className="absolute right-6 top-16 z-20"
+        className="absolute right-6 top-16 z-20 flex flex-col items-center"
         activeOpacity={0.9}
       >
         <Icon name="settings-sharp" color="#FFFFFF" size={32} />
+        <Text className="mt-1 font-dm-bold text-white">設定</Text>
       </TouchableOpacity>
       {isSettingOpen && (
         <SettingView
