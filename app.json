@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "pomodoro-focus-timer",
+    "name": "ポモドーロ集中タイマー",
     "slug": "pomodoro-focus-timer",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pomodorofocus"
     },
     "android": {
       "adaptiveIcon": {
