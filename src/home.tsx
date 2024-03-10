@@ -1,6 +1,6 @@
 import { Audio } from "expo-av";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import SettingView from "./components/setting/setting-view";
 import Button from "./components/ui/button";
@@ -67,10 +67,6 @@ export default function HomePage(props: any) {
     setIsPaused(false);
     setCompletedSessionCount(0);
     setPomodoroStatus(PomodoroStatus.None);
-  };
-
-  const onSettingIconPressed = () => {
-    setIsSettingOpen(!isSettingOpen);
   };
 
   useEffect(() => {
@@ -174,15 +170,20 @@ export default function HomePage(props: any) {
           ? "bg-primary-900"
           : "bg-error-500"
       }`}
+      onTouchEnd={() => {
+        setIsSettingOpen(false);
+      }}
     >
-      <TouchableOpacity
-        onPress={onSettingIconPressed}
+      <View
+        onTouchEnd={(e: any) => {
+          e.stopPropagation();
+          setIsSettingOpen(!isSettingOpen);
+        }}
         className="absolute right-6 top-16 z-10 flex flex-col items-center"
-        activeOpacity={0.9}
       >
         <Icon name="settings-sharp" color="#FFFFFF" size={32} />
         <Text className="mt-1 font-dm-bold text-white">設定</Text>
-      </TouchableOpacity>
+      </View>
       {isSettingOpen && (
         <SettingView
           pomodoroStatus={pomodoroStatus}
