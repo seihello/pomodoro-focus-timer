@@ -49,3 +49,9 @@ eas build --platform ios
 ```
 3. Download ipa file
 4. Upload ipa to Apple Store Connect by Transporter
+
+## Audio
+1. Install expo-av
+```
+npx expo install expo-av
+```

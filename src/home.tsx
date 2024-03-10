@@ -1,3 +1,4 @@
+import { Audio } from "expo-av";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -30,6 +31,9 @@ export default function HomePage(props: any) {
   const [isPaused, setIsPaused] = useState(false);
   const [completedSessionCount, setCompletedSessionCount] = useState(0);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
+
+  const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
+  const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
 
   const onStartButtonPressed = () => {
     setLapStartTime(new Date());
@@ -70,7 +74,7 @@ export default function HomePage(props: any) {
   };
 
   useEffect(() => {
-    const monitor = setInterval(() => {
+    const monitor = setInterval(async () => {
       if (pomodoroStatus === PomodoroStatus.None || isPaused) return;
       const elapsedMilliSeconds =
         new Date().getTime() - lapStartTime.getTime() - pausedMillSeconds;
@@ -88,6 +92,11 @@ export default function HomePage(props: any) {
         setUsedFocusMinutes(focusMinutes);
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
+
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sound/school_bell.mp3"),
+        );
+        await sound.playAsync();
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
         (((completedSessionCount + 1) % 4 === 0 &&
@@ -102,6 +111,12 @@ export default function HomePage(props: any) {
         setUsedFocusMinutes(focusMinutes);
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
+
+        // if (focusStartSound) await focusStartSound.playAsync();
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sound/school_bell.mp3"),
+        );
+        await sound.playAsync();
 
         setCompletedSessionCount(completedSessionCount + 1);
       } else {
@@ -125,6 +140,24 @@ export default function HomePage(props: any) {
     isPaused,
     pausedTime,
   ]);
+
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+
+        const { sound: playbackObject } = await Audio.Sound.createAsync(
+          require("../assets/sound/school_bell.mp3"),
+        );
+        setBreakStartSound(playbackObject);
+        setFocusStartSound(playbackObject);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadSound();
+  }, []);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
