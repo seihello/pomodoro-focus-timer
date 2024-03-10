@@ -73,6 +73,9 @@ export default function SettingView({
         setRootWidth(event.nativeEvent.layout.width);
         setRootHeight(event.nativeEvent.layout.height);
       }}
+      onTouchEnd={(e) => {
+        e.stopPropagation();
+      }}
     >
       <SettingInput
         label="作業時間"
