@@ -162,7 +162,7 @@ export default function HomePage(props: any) {
           setIsOpen={setIsSettingOpen}
         />
       )}
-      <Text className="my-24 ml-2 py-4 text-center font-dm-bold text-4xl text-white">
+      <Text className="my-24 ml-2 py-4 text-center font-dm-bold text-3xl text-white">
         {pomodoroStatus === PomodoroStatus.Focus
           ? "作業がんばりましょう"
           : pomodoroStatus === PomodoroStatus.Break
