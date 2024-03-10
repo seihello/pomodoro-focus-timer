@@ -169,7 +169,7 @@ export default function HomePage(props: any) {
 
   return (
     <View
-      className={`relative flex h-screen w-full flex-col px-4 pt-16 ${
+      className={`relative flex h-screen w-full flex-col px-4 pt-8 ${
         pomodoroStatus === PomodoroStatus.Break
           ? "bg-primary-900"
           : "bg-error-500"
@@ -177,7 +177,7 @@ export default function HomePage(props: any) {
     >
       <TouchableOpacity
         onPress={onSettingIconPressed}
-        className="absolute right-6 top-16 z-20 flex flex-col items-center"
+        className="absolute right-6 top-16 z-10 flex flex-col items-center"
         activeOpacity={0.9}
       >
         <Icon name="settings-sharp" color="#FFFFFF" size={32} />
@@ -195,14 +195,14 @@ export default function HomePage(props: any) {
           setIsOpen={setIsSettingOpen}
         />
       )}
-      <Text className="my-24 ml-2 py-4 text-center font-dm-bold text-3xl text-white">
+      <Text className="mb-24 mt-32 py-4 text-center font-dm-bold text-3xl text-white">
         {pomodoroStatus === PomodoroStatus.Focus
           ? "作業がんばりましょう"
           : pomodoroStatus === PomodoroStatus.Break
             ? "休憩しましょう"
             : " "}
       </Text>
-      <View className="my-2 flex flex-row justify-center">
+      <View className="flex flex-row justify-center">
         <Text className="w-36 py-2 text-right font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
             ? ("0" + String(focusMinutes)).slice(-2)

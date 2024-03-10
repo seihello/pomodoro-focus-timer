@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import PomodoroStatus from "../../enum/pomodoro-status.enum";
 import Text from "../ui/text";
 import SettingInput from "./setting-input";
@@ -35,6 +35,9 @@ export default function SettingView({
     longBreakMinutes,
   );
 
+  const [rootWidth, setRootWidth] = useState(0);
+  const [rootHeight, setRootHeight] = useState(0);
+
   const onSubmitButtonPressed = () => {
     setFocusMinutes(
       tempFocusMinutes === "" || tempFocusMinutes <= 0 ? 25 : tempFocusMinutes,
@@ -54,40 +57,50 @@ export default function SettingView({
   };
 
   return (
-    <TouchableOpacity
-      onPress={() => setIsOpen(false)}
-      className="absolute z-10 flex h-screen w-screen flex-row items-center justify-center px-4 pb-24 pt-32"
-      activeOpacity={1}
+    <View
+      className="shadow-1 absolute left-1/2 top-1/2 z-20 ml-4 mt-4 flex w-full flex-col justify-center rounded-xl bg-gray-100 px-4 py-8"
+      style={
+        StyleSheet.create({
+          container: {
+            transform: [
+              { translateX: -rootWidth / 2 },
+              { translateY: -rootHeight / 2 },
+            ],
+          },
+        }).container
+      }
+      onLayout={(event) => {
+        setRootWidth(event.nativeEvent.layout.width);
+        setRootHeight(event.nativeEvent.layout.height);
+      }}
     >
-      <View className="shadow-1 flex w-full flex-col justify-center rounded-xl bg-gray-100 px-4 py-8">
-        <SettingInput
-          label="作業時間"
-          value={tempFocusMinutes}
-          setValue={setTempFocusMinutes}
-          pomodoroStatus={pomodoroStatus}
-        />
-        <SettingInput
-          label="休憩時間(短)"
-          value={tempShortBreakMinutes}
-          setValue={setTempShortBreakMinutes}
-          pomodoroStatus={pomodoroStatus}
-        />
-        <SettingInput
-          label="休憩時間(長)"
-          value={tempLongBreakMinutes}
-          setValue={setTempLongBreakMinutes}
-          pomodoroStatus={pomodoroStatus}
-        />
-        <TouchableOpacity
-          onPress={onSubmitButtonPressed}
-          className={`flex w-full items-center justify-center rounded-lg py-2 ${pomodoroStatus === PomodoroStatus.Break ? "bg-primary-900" : "bg-error-500"}`}
-          activeOpacity={0.9}
-        >
-          <Text className="flex w-auto flex-row items-center justify-center font-dm-bold text-2xl text-white">
-            変更
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+      <SettingInput
+        label="作業時間"
+        value={tempFocusMinutes}
+        setValue={setTempFocusMinutes}
+        pomodoroStatus={pomodoroStatus}
+      />
+      <SettingInput
+        label="休憩時間(短)"
+        value={tempShortBreakMinutes}
+        setValue={setTempShortBreakMinutes}
+        pomodoroStatus={pomodoroStatus}
+      />
+      <SettingInput
+        label="休憩時間(長)"
+        value={tempLongBreakMinutes}
+        setValue={setTempLongBreakMinutes}
+        pomodoroStatus={pomodoroStatus}
+      />
+      <TouchableOpacity
+        onPress={onSubmitButtonPressed}
+        className={`flex w-full items-center justify-center rounded-lg py-2 ${pomodoroStatus === PomodoroStatus.Break ? "bg-primary-900" : "bg-error-500"}`}
+        activeOpacity={0.9}
+      >
+        <Text className="flex w-auto flex-row items-center justify-center font-dm-bold text-2xl text-white">
+          変更
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
