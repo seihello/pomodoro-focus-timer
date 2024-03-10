@@ -54,7 +54,11 @@ export default function SettingView({
   };
 
   return (
-    <View className="absolute z-10 flex h-screen w-screen flex-row items-center justify-center px-4 pb-24 pt-32">
+    <TouchableOpacity
+      onPress={() => setIsOpen(false)}
+      className="absolute z-10 flex h-screen w-screen flex-row items-center justify-center px-4 pb-24 pt-32"
+      activeOpacity={1}
+    >
       <View className="shadow-1 flex w-full flex-col justify-center rounded-xl bg-gray-100 px-4 py-8">
         <SettingInput
           label="作業時間"
@@ -84,6 +88,6 @@ export default function SettingView({
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
