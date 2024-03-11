@@ -55,3 +55,8 @@ eas build --platform ios
 ```
 npx expo install expo-av
 ```
+
+## Troubleshooting
+```
+npm install -g eas-cli to update eas-cli
+```
