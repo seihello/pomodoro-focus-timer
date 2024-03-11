@@ -1,7 +1,8 @@
 import { Audio } from "expo-av";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
+import IonIcon from "react-native-vector-icons/Ionicons";
 import SettingView from "./components/setting/setting-view";
 import Button from "./components/ui/button";
 import Text from "./components/ui/text";
@@ -16,8 +17,9 @@ export default function HomePage(props: any) {
   const [focusMinutes, setFocusMinutes] = useState<number>(25);
   const [shortBreakMinutes, setShortBreakMinutes] = useState<number>(5);
   const [longBreakMinutes, setLongBreakMinutes] = useState<number>(15);
+  const [isSoundOn, setIsSoundOn] = useState<boolean>(false);
 
-  // User setting values
+  // User setting values that are currently used
   const [usedFocusMinutes, setUsedFocusMinutes] = useState<number>(25);
   const [usedShortBreakMinutes, setUsedShortBreakMinutes] = useState<number>(5);
   const [usedLongBreakMinutes, setUsedLongBreakMinutes] = useState<number>(15);
@@ -89,10 +91,12 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        const { sound } = await Audio.Sound.createAsync(
-          require("../assets/sound/school_bell.mp3"),
-        );
-        await sound.playAsync();
+        if (isSoundOn) {
+          const { sound } = await Audio.Sound.createAsync(
+            require("../assets/sound/school_bell.mp3"),
+          );
+          await sound.playAsync();
+        }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
         (((completedSessionCount + 1) % 4 === 0 &&
@@ -108,11 +112,12 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        // if (focusStartSound) await focusStartSound.playAsync();
-        const { sound } = await Audio.Sound.createAsync(
-          require("../assets/sound/school_bell.mp3"),
-        );
-        await sound.playAsync();
+        if (isSoundOn) {
+          const { sound } = await Audio.Sound.createAsync(
+            require("../assets/sound/school_bell.mp3"),
+          );
+          await sound.playAsync();
+        }
 
         setCompletedSessionCount(completedSessionCount + 1);
       } else {
@@ -135,6 +140,7 @@ export default function HomePage(props: any) {
     setElapsedSeconds,
     isPaused,
     pausedTime,
+    isSoundOn,
   ]);
 
   useEffect(() => {
@@ -177,11 +183,29 @@ export default function HomePage(props: any) {
       <View
         onTouchEnd={(e: any) => {
           e.stopPropagation();
+          if (isSettingOpen) {
+            setIsSettingOpen(false);
+          } else {
+            setIsSoundOn(!isSoundOn);
+          }
+        }}
+        className="absolute right-20 top-16 z-10 flex flex-col items-center"
+      >
+        <FontAwesomeIcon
+          name={isSoundOn ? "volume-high" : "volume-xmark"}
+          color="#FFFFFF"
+          size={32}
+        />
+        <Text className="mt-1 font-dm-bold text-white">通知音</Text>
+      </View>
+      <View
+        onTouchEnd={(e: any) => {
+          e.stopPropagation();
           setIsSettingOpen(!isSettingOpen);
         }}
-        className="absolute right-6 top-16 z-10 flex flex-col items-center"
+        className="absolute right-8 top-16 z-10 flex flex-col items-center"
       >
-        <Icon name="settings-sharp" color="#FFFFFF" size={32} />
+        <IonIcon name={"settings-sharp"} color="#FFFFFF" size={32} />
         <Text className="mt-1 font-dm-bold text-white">設定</Text>
       </View>
       {isSettingOpen && (
