@@ -1,7 +1,13 @@
 # Pomodoro Timer
 A mobile application to support work using the Pomodoro Technique.
 
-<!-- ![Showcase](/assets/showcase.png) -->
+
+[<img src="/assets/download.svg">](https://apps.apple.com/jp/app/%E3%83%9D%E3%83%A2%E3%83%89%E3%83%BC%E3%83%AD%E9%9B%86%E4%B8%AD%E4%BD%9C%E6%A5%AD/id6478929673?l=en-US)
+
+<img src="/assets/screentshots/6.7/focus1.png" style="width: 24%; height: auto;" />
+<img src="/assets/screentshots/6.7/focus2.png" style="width: 24%; height: auto;" />
+<img src="/assets/screentshots/6.7/break1.png" style="width: 24%; height: auto;" />
+<img src="/assets/screentshots/6.7/setting.png" style="width: 24%; height: auto;" />
 
 ## Technology
 - TypeScript
@@ -37,7 +43,7 @@ module.exports = function (api) {
 5. Start Expo
 ```
 npx expo start
-npx expo start-c (If Tailwind doesn't work)
+npx expo start -c (If Tailwind doesn't work)
 ```
 
 ## Setup
