@@ -1,6 +1,6 @@
 import { Audio } from "expo-av";
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, View } from "react-native";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import SettingView from "./components/setting/setting-view";
@@ -36,6 +36,24 @@ export default function HomePage(props: any) {
 
   const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
   const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
+
+  const transitBackgroundColor = useRef(new Animated.Value(1)).current;
+
+  const updateColor = (status: PomodoroStatus) => {
+    if (status === PomodoroStatus.Break) {
+      Animated.timing(transitBackgroundColor, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(transitBackgroundColor, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
+  };
 
   const onStartButtonPressed = () => {
     setLapStartTime(new Date());
@@ -161,6 +179,10 @@ export default function HomePage(props: any) {
     loadSound();
   }, []);
 
+  useEffect(() => {
+    updateColor(pomodoroStatus);
+  }, [pomodoroStatus]);
+
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
       ? usedFocusMinutes
@@ -170,12 +192,14 @@ export default function HomePage(props: any) {
   const remainingSeconds = LAP_MINUTES * 60 - elapsedSeconds;
 
   return (
-    <View
-      className={`relative flex h-screen w-full flex-col px-4 pt-8 ${
-        pomodoroStatus === PomodoroStatus.Break
-          ? "bg-primary-900"
-          : "bg-error-500"
-      }`}
+    <Animated.View
+      className="relative flex h-screen w-full flex-col px-4 pt-8"
+      style={{
+        backgroundColor: transitBackgroundColor.interpolate({
+          inputRange: [0, 1],
+          outputRange: ["rgb(9, 130, 146)", "rgb(245, 92, 103)"],
+        }),
+      }}
       onTouchEnd={() => {
         setIsSettingOpen(false);
       }}
@@ -268,6 +292,6 @@ export default function HomePage(props: any) {
         type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
         className="mt-2"
       />
-    </View>
+    </Animated.View>
   );
 }
