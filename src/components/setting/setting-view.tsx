@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, View } from "react-native";
 import TransitionButton from "../ui/transition-button";
 import SettingInput from "./setting-input";
 
@@ -58,16 +58,13 @@ export default function SettingView({
   return (
     <View
       className="shadow-1 absolute left-1/2 top-1/2 z-20 ml-4 mt-4 flex w-full flex-col justify-center rounded-xl bg-gray-100 px-4 py-8"
-      style={
-        StyleSheet.create({
-          container: {
-            transform: [
-              { translateX: -rootWidth / 2 },
-              { translateY: -rootHeight / 2 },
-            ],
-          },
-        }).container
-      }
+      style={{
+        transform: [
+          { translateX: -rootWidth / 2 },
+          { translateY: -rootHeight / 2 },
+        ],
+        opacity: rootWidth && rootHeight ? 1 : 0,
+      }}
       onLayout={(event) => {
         setRootWidth(event.nativeEvent.layout.width);
         setRootHeight(event.nativeEvent.layout.height);
