@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import PomodoroStatus from "../../enum/pomodoro-status.enum";
-import Text from "../ui/text";
+import { Animated, StyleSheet, View } from "react-native";
+import TransitionButton from "../ui/transition-button";
 import SettingInput from "./setting-input";
 
 type Props = {
-  pomodoroStatus: PomodoroStatus;
   focusMinutes: number;
   setFocusMinutes: (value: number) => void;
   shortBreakMinutes: number;
@@ -13,10 +11,10 @@ type Props = {
   longBreakMinutes: number;
   setLongBreakMinutes: (value: number) => void;
   setIsOpen: (value: boolean) => void;
+  transitThemeColor: Animated.Value;
 };
 
 export default function SettingView({
-  pomodoroStatus,
   focusMinutes,
   setFocusMinutes,
   shortBreakMinutes,
@@ -24,6 +22,7 @@ export default function SettingView({
   longBreakMinutes,
   setLongBreakMinutes,
   setIsOpen,
+  transitThemeColor,
 }: Props) {
   const [tempFocusMinutes, setTempFocusMinutes] = useState<number | "">(
     focusMinutes,
@@ -81,29 +80,27 @@ export default function SettingView({
         label="作業時間"
         value={tempFocusMinutes}
         setValue={setTempFocusMinutes}
-        pomodoroStatus={pomodoroStatus}
+        transitThemeColor={transitThemeColor}
       />
       <SettingInput
         label="休憩時間(短)"
         value={tempShortBreakMinutes}
         setValue={setTempShortBreakMinutes}
-        pomodoroStatus={pomodoroStatus}
+        transitThemeColor={transitThemeColor}
       />
       <SettingInput
         label="休憩時間(長)"
         value={tempLongBreakMinutes}
         setValue={setTempLongBreakMinutes}
-        pomodoroStatus={pomodoroStatus}
+        transitThemeColor={transitThemeColor}
       />
-      <TouchableOpacity
+      <TransitionButton
+        type="filled"
         onPress={onSubmitButtonPressed}
-        className={`flex w-full items-center justify-center rounded-lg py-2 ${pomodoroStatus === PomodoroStatus.Break ? "bg-primary-900" : "bg-error-500"}`}
-        activeOpacity={0.9}
+        color={transitThemeColor}
       >
-        <Text className="flex w-auto flex-row items-center justify-center font-dm-bold text-2xl text-white">
-          変更
-        </Text>
-      </TouchableOpacity>
+        変更
+      </TransitionButton>
     </View>
   );
 }

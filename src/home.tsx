@@ -4,8 +4,8 @@ import { Animated, View } from "react-native";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import SettingView from "./components/setting/setting-view";
-import Button from "./components/ui/button";
 import Text from "./components/ui/text";
+import TransitionButton from "./components/ui/transition-button";
 import PomodoroStatus from "./enum/pomodoro-status.enum";
 
 const LONG_BREAK_MINUTES = 15;
@@ -37,19 +37,19 @@ export default function HomePage(props: any) {
   const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
   const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
 
-  const transitBackgroundColor = useRef(new Animated.Value(1)).current;
+  const transitThemeColor = useRef(new Animated.Value(1)).current;
 
   const updateColor = (status: PomodoroStatus) => {
     if (status === PomodoroStatus.Break) {
-      Animated.timing(transitBackgroundColor, {
+      Animated.timing(transitThemeColor, {
         toValue: 0,
-        duration: 300,
+        duration: 1000,
         useNativeDriver: false,
       }).start();
     } else {
-      Animated.timing(transitBackgroundColor, {
+      Animated.timing(transitThemeColor, {
         toValue: 1,
-        duration: 300,
+        duration: 1000,
         useNativeDriver: false,
       }).start();
     }
@@ -195,7 +195,7 @@ export default function HomePage(props: any) {
     <Animated.View
       className="relative flex h-screen w-full flex-col px-4 pt-8"
       style={{
-        backgroundColor: transitBackgroundColor.interpolate({
+        backgroundColor: transitThemeColor.interpolate({
           inputRange: [0, 1],
           outputRange: ["rgb(9, 130, 146)", "rgb(245, 92, 103)"],
         }),
@@ -239,7 +239,6 @@ export default function HomePage(props: any) {
       </View>
       {isSettingOpen && (
         <SettingView
-          pomodoroStatus={pomodoroStatus}
           focusMinutes={focusMinutes}
           setFocusMinutes={setFocusMinutes}
           shortBreakMinutes={shortBreakMinutes}
@@ -247,6 +246,7 @@ export default function HomePage(props: any) {
           longBreakMinutes={longBreakMinutes}
           setLongBreakMinutes={setLongBreakMinutes}
           setIsOpen={setIsSettingOpen}
+          transitThemeColor={transitThemeColor}
         />
       )}
       <Text className="mb-24 mt-32 py-4 text-center font-dm-bold text-3xl text-white">
@@ -271,27 +271,40 @@ export default function HomePage(props: any) {
             : ("0" + String(remainingSeconds % 60)).slice(-2)}
         </Text>
       </View>
-      {pomodoroStatus === PomodoroStatus.None ? (
-        <Button title="開始" onPress={onStartButtonPressed} type="error" />
-      ) : isPaused ? (
-        <Button
-          title="再開"
-          onPress={onResumeButtonPressed}
-          type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-        />
-      ) : (
-        <Button
-          title="一時停止"
-          onPress={onPauseButtonPressed}
-          type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-        />
-      )}
-      <Button
-        title="最初から"
-        onPress={onResetButtonPressed}
-        type={pomodoroStatus === PomodoroStatus.Break ? "primary" : "error"}
-        className="mt-2"
-      />
+      <View className="flex flex-col gap-y-4">
+        {pomodoroStatus === PomodoroStatus.None ? (
+          <TransitionButton
+            type="stroke"
+            onPress={onStartButtonPressed}
+            color={transitThemeColor}
+          >
+            開始
+          </TransitionButton>
+        ) : isPaused ? (
+          <TransitionButton
+            type="stroke"
+            onPress={onResumeButtonPressed}
+            color={transitThemeColor}
+          >
+            再開
+          </TransitionButton>
+        ) : (
+          <TransitionButton
+            type="stroke"
+            onPress={onPauseButtonPressed}
+            color={transitThemeColor}
+          >
+            一時停止
+          </TransitionButton>
+        )}
+        <TransitionButton
+          type="stroke"
+          onPress={onResetButtonPressed}
+          color={transitThemeColor}
+        >
+          最初から
+        </TransitionButton>
+      </View>
     </Animated.View>
   );
 }
