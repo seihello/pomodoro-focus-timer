@@ -180,33 +180,38 @@ export default function HomePage(props: any) {
         setIsSettingOpen(false);
       }}
     >
-      <View
-        onTouchEnd={(e: any) => {
-          e.stopPropagation();
-          if (isSettingOpen) {
-            setIsSettingOpen(false);
-          } else {
-            setIsSoundOn(!isSoundOn);
-          }
-        }}
-        className="absolute right-20 top-16 z-10 flex flex-col items-center"
-      >
-        <FontAwesomeIcon
-          name={isSoundOn ? "volume-high" : "volume-xmark"}
-          color="#FFFFFF"
-          size={32}
-        />
-        <Text className="mt-1 font-dm-bold text-white">通知音</Text>
-      </View>
-      <View
-        onTouchEnd={(e: any) => {
-          e.stopPropagation();
-          setIsSettingOpen(!isSettingOpen);
-        }}
-        className="absolute right-8 top-16 z-10 flex flex-col items-center"
-      >
-        <IonIcon name={"settings-sharp"} color="#FFFFFF" size={32} />
-        <Text className="mt-1 font-dm-bold text-white">設定</Text>
+      <View className="absolute right-4 top-16 flex flex-row">
+        <View
+          onTouchEnd={(e: any) => {
+            e.stopPropagation();
+            if (isSettingOpen) {
+              setIsSettingOpen(false);
+            } else {
+              setIsSoundOn(!isSoundOn);
+            }
+          }}
+          className="z-10 flex w-12 flex-col items-start"
+        >
+          <View className="ml-[2px]">
+            <FontAwesomeIcon
+              name={isSoundOn ? "volume-high" : "volume-xmark"}
+              className="ml-1"
+              color="#FFFFFF"
+              size={32}
+            />
+          </View>
+          <Text className="mt-1 font-dm-bold text-white">通知音</Text>
+        </View>
+        <View
+          onTouchEnd={(e: any) => {
+            e.stopPropagation();
+            setIsSettingOpen(!isSettingOpen);
+          }}
+          className="z-10 flex w-12 flex-col items-center"
+        >
+          <IonIcon name={"settings-sharp"} color="#FFFFFF" size={32} />
+          <Text className="mt-1 font-dm-bold text-white">設定</Text>
+        </View>
       </View>
       {isSettingOpen && (
         <SettingView
