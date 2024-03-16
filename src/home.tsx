@@ -64,7 +64,9 @@ export default function HomePage(props: any) {
     setUsedShortBreakMinutes(shortBreakMinutes);
     setUsedLongBreakMinutes(longBreakMinutes);
 
-    backgroundSound?.playAsync();
+    setTimeout(() => {
+      backgroundSound?.playAsync();
+    }, 100);
   };
 
   const onPauseButtonPressed = () => {
