@@ -113,7 +113,9 @@ export default function HomePage(props: any) {
           const { sound } = await Audio.Sound.createAsync(
             require("../assets/sound/school_bell.mp3"),
           );
-          await sound.playAsync();
+          try {
+            sound.playAsync();
+          } catch (error) {}
         }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
@@ -134,7 +136,9 @@ export default function HomePage(props: any) {
           const { sound } = await Audio.Sound.createAsync(
             require("../assets/sound/school_bell.mp3"),
           );
-          await sound.playAsync();
+          try {
+            sound.playAsync();
+          } catch (error) {}
         }
 
         setCompletedSessionCount(completedSessionCount + 1);
@@ -164,7 +168,10 @@ export default function HomePage(props: any) {
   useEffect(() => {
     const loadSound = async () => {
       try {
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          playsInSilentModeIOS: true,
+        });
 
         const { sound: playbackObject } = await Audio.Sound.createAsync(
           require("../assets/sound/school_bell.mp3"),
