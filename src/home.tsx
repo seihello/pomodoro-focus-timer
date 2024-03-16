@@ -121,7 +121,8 @@ export default function HomePage(props: any) {
         setUsedLongBreakMinutes(longBreakMinutes);
 
         if (isSoundOn) {
-          await breakStartSound?.playAsync();
+          backgroundSound?.setVolumeAsync(1);
+          await breakStartSound?.replayAsync();
         }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
@@ -139,7 +140,8 @@ export default function HomePage(props: any) {
         setUsedLongBreakMinutes(longBreakMinutes);
 
         if (isSoundOn) {
-          await focusStartSound?.playAsync();
+          backgroundSound?.setVolumeAsync(1);
+          await focusStartSound?.replayAsync();
         }
 
         setCompletedSessionCount(completedSessionCount + 1);
@@ -177,6 +179,13 @@ export default function HomePage(props: any) {
         const { sound: notificationSound } = await Audio.Sound.createAsync(
           require("../assets/sound/notification/school_bell.mp3"),
         );
+        notificationSound.setOnPlaybackStatusUpdate((playbackStatus) => {
+          if (playbackStatus.isLoaded) {
+            if (playbackStatus.didJustFinish) {
+              backgroundSound.setVolumeAsync(1);
+            }
+          }
+        });
         setBreakStartSound(notificationSound);
         setFocusStartSound(notificationSound);
 
