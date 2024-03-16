@@ -113,9 +113,7 @@ export default function HomePage(props: any) {
           const { sound } = await Audio.Sound.createAsync(
             require("../assets/sound/school_bell.mp3"),
           );
-          try {
-            sound.playAsync();
-          } catch (error) {}
+          await sound.playAsync();
         }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
@@ -136,9 +134,7 @@ export default function HomePage(props: any) {
           const { sound } = await Audio.Sound.createAsync(
             require("../assets/sound/school_bell.mp3"),
           );
-          try {
-            sound.playAsync();
-          } catch (error) {}
+          await sound.playAsync();
         }
 
         setCompletedSessionCount(completedSessionCount + 1);
