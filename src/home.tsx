@@ -47,7 +47,7 @@ export default function HomePage(props: any) {
   const [isPaused, setIsPaused] = useState(false);
   const [completedSessionCount, setCompletedSessionCount] = useState(0);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
-  const [isSettingsFirstLoaded, setIsSettingsFirstLoaded] = useState(false);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
   const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
   const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
@@ -120,7 +120,7 @@ export default function HomePage(props: any) {
       try {
         const settings = await loadSettings();
         if (settings) setSettings(settings);
-        setIsSettingsFirstLoaded(true);
+        setIsLoadingSettings(false);
       } catch (error) {
         // do nothing
       }
@@ -195,6 +195,7 @@ export default function HomePage(props: any) {
 
   useEffect(() => {
     const loadSound = async () => {
+      if (isLoadingSettings) return;
       try {
         await Audio.setAudioModeAsync({
           staysActiveInBackground: true,
@@ -228,7 +229,7 @@ export default function HomePage(props: any) {
     };
 
     loadSound();
-  }, []);
+  }, [isLoadingSettings]);
 
   useEffect(() => {
     updateColor(pomodoroStatus);
@@ -240,12 +241,12 @@ export default function HomePage(props: any) {
 
   useEffect(() => {
     const saveData = async () => {
-      if (isSettingsFirstLoaded) {
+      if (!isLoadingSettings) {
         await saveSettings(settings);
       }
     };
     saveData();
-  }, [settings, isSettingsFirstLoaded]);
+  }, [settings, isLoadingSettings]);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
@@ -255,7 +256,7 @@ export default function HomePage(props: any) {
         : usedShortBreakMinutes;
   const remainingSeconds = LAP_MINUTES * 60 - elapsedSeconds;
 
-  if (!isSettingsFirstLoaded) return;
+  if (isLoadingSettings) return;
 
   return (
     <Animated.View
