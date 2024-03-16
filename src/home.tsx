@@ -246,16 +246,16 @@ export default function HomePage(props: any) {
               setIsBackgroundSoundOn(!isBackgroundSoundOn);
             }
           }}
-          className="z-10 flex w-12 flex-col items-center"
+          className="z-10 mr-1 flex w-12 flex-col items-center"
         >
           <View>
             <MaterialCommunityIcons
               name={isBackgroundSoundOn ? "music" : "music-off"}
               color="#FFFFFF"
-              size={32}
+              size={34}
             />
           </View>
-          <Text className="mt-1 font-dm-bold tracking-tighter text-white">
+          <Text className="mt-[2px] font-dm-bold tracking-tighter text-white">
             ＢＧＭ
           </Text>
         </View>
