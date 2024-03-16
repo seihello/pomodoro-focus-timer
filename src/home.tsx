@@ -36,6 +36,7 @@ export default function HomePage(props: any) {
 
   const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
   const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
+  const [backgroundSound, setBackgroundSound] = useState<Audio.Sound>();
 
   const transitThemeColor = useRef(new Animated.Value(1)).current;
 
@@ -62,6 +63,8 @@ export default function HomePage(props: any) {
     setUsedFocusMinutes(focusMinutes);
     setUsedShortBreakMinutes(shortBreakMinutes);
     setUsedLongBreakMinutes(longBreakMinutes);
+
+    if (backgroundSound) backgroundSound?.playAsync();
   };
 
   const onPauseButtonPressed = () => {
@@ -109,11 +112,8 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn) {
-          const { sound } = await Audio.Sound.createAsync(
-            require("../assets/sound/school_bell.mp3"),
-          );
-          await sound.playAsync();
+        if (isSoundOn && breakStartSound) {
+          await breakStartSound.playAsync();
         }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
@@ -130,11 +130,8 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn) {
-          const { sound } = await Audio.Sound.createAsync(
-            require("../assets/sound/school_bell.mp3"),
-          );
-          await sound.playAsync();
+        if (isSoundOn && focusStartSound) {
+          await focusStartSound.playAsync();
         }
 
         setCompletedSessionCount(completedSessionCount + 1);
@@ -169,11 +166,18 @@ export default function HomePage(props: any) {
           playsInSilentModeIOS: true,
         });
 
-        const { sound: playbackObject } = await Audio.Sound.createAsync(
-          require("../assets/sound/school_bell.mp3"),
+        const { sound: notificationSound } = await Audio.Sound.createAsync(
+          require("../assets/sound/notification/school_bell.mp3"),
         );
-        setBreakStartSound(playbackObject);
-        setFocusStartSound(playbackObject);
+        setBreakStartSound(notificationSound);
+        setFocusStartSound(notificationSound);
+
+        const { sound: backgroundSound } = await Audio.Sound.createAsync(
+          require("../assets/sound/background/Green_Cafe.mp3"),
+        );
+        backgroundSound.setIsLoopingAsync(true);
+        backgroundSound.setVolumeAsync(1); // same as default
+        setBackgroundSound(backgroundSound);
       } catch (error) {
         console.error(error);
       }
