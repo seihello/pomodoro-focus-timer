@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
 import IonIcon from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import SettingView from "./components/setting/setting-view";
 import Text from "./components/ui/text";
 import TransitionButton from "./components/ui/transition-button";
@@ -17,7 +18,10 @@ export default function HomePage(props: any) {
   const [focusMinutes, setFocusMinutes] = useState<number>(25);
   const [shortBreakMinutes, setShortBreakMinutes] = useState<number>(5);
   const [longBreakMinutes, setLongBreakMinutes] = useState<number>(15);
-  const [isSoundOn, setIsSoundOn] = useState<boolean>(false);
+  const [isNotificationSoundOn, setIsNotificationSoundOn] =
+    useState<boolean>(false);
+  const [isBackgroundSoundOn, setIsBackgroundSoundOn] =
+    useState<boolean>(false);
 
   // User setting values that are currently used
   const [usedFocusMinutes, setUsedFocusMinutes] = useState<number>(25);
@@ -120,7 +124,7 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn) {
+        if (isNotificationSoundOn) {
           backgroundSound?.setVolumeAsync(1);
           await breakStartSound?.replayAsync();
         }
@@ -139,7 +143,7 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn) {
+        if (isNotificationSoundOn) {
           backgroundSound?.setVolumeAsync(1);
           await focusStartSound?.replayAsync();
         }
@@ -165,7 +169,7 @@ export default function HomePage(props: any) {
     setElapsedSeconds,
     isPaused,
     pausedTime,
-    isSoundOn,
+    isNotificationSoundOn,
   ]);
 
   useEffect(() => {
@@ -193,7 +197,7 @@ export default function HomePage(props: any) {
           require("../assets/sound/background/Green_Cafe.mp3"),
         );
         backgroundSound.setIsLoopingAsync(true);
-        backgroundSound.setVolumeAsync(1); // same as default
+        backgroundSound.setVolumeAsync(isBackgroundSoundOn ? 1 : 0); // same as default
         setBackgroundSound(backgroundSound);
       } catch (error) {
         console.error(error);
@@ -206,6 +210,10 @@ export default function HomePage(props: any) {
   useEffect(() => {
     updateColor(pomodoroStatus);
   }, [pomodoroStatus]);
+
+  useEffect(() => {
+    backgroundSound?.setVolumeAsync(isBackgroundSoundOn ? 1 : 0);
+  }, [isBackgroundSoundOn]);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
@@ -228,22 +236,43 @@ export default function HomePage(props: any) {
         setIsSettingOpen(false);
       }}
     >
-      <View className="absolute right-4 top-16 flex flex-row">
+      <View className="absolute right-4 top-16 flex flex-row gap-x-2">
         <View
           onTouchEnd={(e: any) => {
             e.stopPropagation();
             if (isSettingOpen) {
               setIsSettingOpen(false);
             } else {
-              setIsSoundOn(!isSoundOn);
+              setIsBackgroundSoundOn(!isBackgroundSoundOn);
+            }
+          }}
+          className="z-10 flex w-12 flex-col items-center"
+        >
+          <View>
+            <MaterialCommunityIcons
+              name={isBackgroundSoundOn ? "music" : "music-off"}
+              color="#FFFFFF"
+              size={32}
+            />
+          </View>
+          <Text className="mt-1 font-dm-bold tracking-tighter text-white">
+            ＢＧＭ
+          </Text>
+        </View>
+        <View
+          onTouchEnd={(e: any) => {
+            e.stopPropagation();
+            if (isSettingOpen) {
+              setIsSettingOpen(false);
+            } else {
+              setIsNotificationSoundOn(!isNotificationSoundOn);
             }
           }}
           className="z-10 flex w-12 flex-col items-start"
         >
           <View className="ml-[2px]">
             <FontAwesomeIcon
-              name={isSoundOn ? "volume-high" : "volume-xmark"}
-              className="ml-1"
+              name={isNotificationSoundOn ? "volume-high" : "volume-xmark"}
               color="#FFFFFF"
               size={32}
             />
@@ -255,7 +284,7 @@ export default function HomePage(props: any) {
             e.stopPropagation();
             setIsSettingOpen(!isSettingOpen);
           }}
-          className="z-10 flex w-12 flex-col items-center"
+          className="z-10 flex flex-col items-center"
         >
           <IonIcon name={"settings-sharp"} color="#FFFFFF" size={32} />
           <Text className="mt-1 font-dm-bold text-white">設定</Text>
