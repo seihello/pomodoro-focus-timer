@@ -43,13 +43,13 @@ export default function HomePage(props: any) {
     if (status === PomodoroStatus.Break) {
       Animated.timing(transitThemeColor, {
         toValue: 0,
-        duration: 500,
+        duration: 300,
         useNativeDriver: false,
       }).start();
     } else {
       Animated.timing(transitThemeColor, {
         toValue: 1,
-        duration: 500,
+        duration: 300,
         useNativeDriver: false,
       }).start();
     }
