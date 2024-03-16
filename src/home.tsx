@@ -64,12 +64,14 @@ export default function HomePage(props: any) {
     setUsedShortBreakMinutes(shortBreakMinutes);
     setUsedLongBreakMinutes(longBreakMinutes);
 
-    if (backgroundSound) backgroundSound?.playAsync();
+    backgroundSound?.playAsync();
   };
 
   const onPauseButtonPressed = () => {
     setIsPaused(true);
     setPausedTime(new Date());
+
+    backgroundSound?.pauseAsync();
   };
 
   const onResumeButtonPressed = () => {
@@ -80,6 +82,8 @@ export default function HomePage(props: any) {
     }
     setIsPaused(false);
     setPausedTime(null);
+
+    backgroundSound?.playAsync();
   };
 
   const onResetButtonPressed = () => {
@@ -90,6 +94,8 @@ export default function HomePage(props: any) {
     setIsPaused(false);
     setCompletedSessionCount(0);
     setPomodoroStatus(PomodoroStatus.None);
+
+    backgroundSound?.stopAsync();
   };
 
   useEffect(() => {
@@ -112,8 +118,8 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn && breakStartSound) {
-          await breakStartSound.playAsync();
+        if (isSoundOn) {
+          await breakStartSound?.playAsync();
         }
       } else if (
         pomodoroStatus === PomodoroStatus.Break &&
@@ -130,8 +136,8 @@ export default function HomePage(props: any) {
         setUsedShortBreakMinutes(shortBreakMinutes);
         setUsedLongBreakMinutes(longBreakMinutes);
 
-        if (isSoundOn && focusStartSound) {
-          await focusStartSound.playAsync();
+        if (isSoundOn) {
+          await focusStartSound?.playAsync();
         }
 
         setCompletedSessionCount(completedSessionCount + 1);
