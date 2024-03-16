@@ -8,6 +8,9 @@ import SettingView from "./components/setting/setting-view";
 import Text from "./components/ui/text";
 import TransitionButton from "./components/ui/transition-button";
 import PomodoroStatus from "./enum/pomodoro-status.enum";
+import loadSettings from "./lib/settings/load-settings";
+import saveSettings from "./lib/settings/save-settings";
+import Settings from "./types/settings.type";
 
 const LONG_BREAK_MINUTES = 15;
 const SESSION_NUM = 4;
@@ -15,13 +18,20 @@ const ROUND_NUM = 5;
 
 export default function HomePage(props: any) {
   // User setting values
-  const [focusMinutes, setFocusMinutes] = useState<number>(25);
-  const [shortBreakMinutes, setShortBreakMinutes] = useState<number>(5);
-  const [longBreakMinutes, setLongBreakMinutes] = useState<number>(15);
-  const [isNotificationSoundOn, setIsNotificationSoundOn] =
-    useState<boolean>(false);
-  const [isBackgroundSoundOn, setIsBackgroundSoundOn] =
-    useState<boolean>(false);
+  // const [focusMinutes, setFocusMinutes] = useState<number>(25);
+  // const [shortBreakMinutes, setShortBreakMinutes] = useState<number>(5);
+  // const [longBreakMinutes, setLongBreakMinutes] = useState<number>(15);
+  // const [isNotificationSoundOn, setIsNotificationSoundOn] =
+  //   useState<boolean>(false);
+  // const [isBackgroundSoundOn, setIsBackgroundSoundOn] =
+  //   useState<boolean>(false);
+  const [settings, setSettings] = useState<Settings>({
+    focusMinutes: 25,
+    shortBreakMinutes: 5,
+    longBreakMinutes: 15,
+    isBackgroundSoundEnabled: false,
+    isNotificationSoundEnabled: false,
+  });
 
   // User setting values that are currently used
   const [usedFocusMinutes, setUsedFocusMinutes] = useState<number>(25);
@@ -37,6 +47,7 @@ export default function HomePage(props: any) {
   const [isPaused, setIsPaused] = useState(false);
   const [completedSessionCount, setCompletedSessionCount] = useState(0);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
+  const [isSettingsFirstLoaded, setIsSettingsFirstLoaded] = useState(false);
 
   const [breakStartSound, setBreakStartSound] = useState<Audio.Sound>();
   const [focusStartSound, setFocusStartSound] = useState<Audio.Sound>();
@@ -64,9 +75,9 @@ export default function HomePage(props: any) {
     setLapStartTime(new Date());
     setPomodoroStatus(PomodoroStatus.Focus);
 
-    setUsedFocusMinutes(focusMinutes);
-    setUsedShortBreakMinutes(shortBreakMinutes);
-    setUsedLongBreakMinutes(longBreakMinutes);
+    setUsedFocusMinutes(settings.focusMinutes);
+    setUsedShortBreakMinutes(settings.shortBreakMinutes);
+    setUsedLongBreakMinutes(settings.longBreakMinutes);
 
     setTimeout(() => {
       backgroundSound?.playAsync();
@@ -105,6 +116,19 @@ export default function HomePage(props: any) {
   };
 
   useEffect(() => {
+    const prepare = async () => {
+      try {
+        const settings = await loadSettings();
+        if (settings) setSettings(settings);
+        setIsSettingsFirstLoaded(true);
+      } catch (error) {
+        // do nothing
+      }
+    };
+    prepare();
+  }, []);
+
+  useEffect(() => {
     const monitor = setInterval(async () => {
       if (pomodoroStatus === PomodoroStatus.None || isPaused) return;
       const elapsedMilliSeconds =
@@ -120,11 +144,11 @@ export default function HomePage(props: any) {
         setPausedMillSeconds(0);
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Break);
-        setUsedFocusMinutes(focusMinutes);
-        setUsedShortBreakMinutes(shortBreakMinutes);
-        setUsedLongBreakMinutes(longBreakMinutes);
+        setUsedFocusMinutes(settings.focusMinutes);
+        setUsedShortBreakMinutes(settings.shortBreakMinutes);
+        setUsedLongBreakMinutes(settings.longBreakMinutes);
 
-        if (isNotificationSoundOn) {
+        if (settings.isNotificationSoundEnabled) {
           backgroundSound?.setVolumeAsync(1);
           await breakStartSound?.replayAsync();
         }
@@ -139,11 +163,11 @@ export default function HomePage(props: any) {
         setPausedMillSeconds(0);
         setLapStartTime(new Date());
         setPomodoroStatus(PomodoroStatus.Focus);
-        setUsedFocusMinutes(focusMinutes);
-        setUsedShortBreakMinutes(shortBreakMinutes);
-        setUsedLongBreakMinutes(longBreakMinutes);
+        setUsedFocusMinutes(settings.focusMinutes);
+        setUsedShortBreakMinutes(settings.shortBreakMinutes);
+        setUsedLongBreakMinutes(settings.longBreakMinutes);
 
-        if (isNotificationSoundOn) {
+        if (settings.isNotificationSoundEnabled) {
           backgroundSound?.setVolumeAsync(1);
           await focusStartSound?.replayAsync();
         }
@@ -159,9 +183,7 @@ export default function HomePage(props: any) {
     };
   }, [
     pomodoroStatus,
-    focusMinutes,
-    shortBreakMinutes,
-    longBreakMinutes,
+    settings,
     usedFocusMinutes,
     usedShortBreakMinutes,
     usedLongBreakMinutes,
@@ -169,7 +191,6 @@ export default function HomePage(props: any) {
     setElapsedSeconds,
     isPaused,
     pausedTime,
-    isNotificationSoundOn,
   ]);
 
   useEffect(() => {
@@ -197,7 +218,9 @@ export default function HomePage(props: any) {
           require("../assets/sound/background/Green_Cafe.mp3"),
         );
         backgroundSound.setIsLoopingAsync(true);
-        backgroundSound.setVolumeAsync(isBackgroundSoundOn ? 1 : 0); // same as default
+        backgroundSound.setVolumeAsync(
+          settings.isBackgroundSoundEnabled ? 1 : 0,
+        ); // same as default
         setBackgroundSound(backgroundSound);
       } catch (error) {
         console.error(error);
@@ -212,8 +235,17 @@ export default function HomePage(props: any) {
   }, [pomodoroStatus]);
 
   useEffect(() => {
-    backgroundSound?.setVolumeAsync(isBackgroundSoundOn ? 1 : 0);
-  }, [isBackgroundSoundOn]);
+    backgroundSound?.setVolumeAsync(settings.isBackgroundSoundEnabled ? 1 : 0);
+  }, [settings.isBackgroundSoundEnabled]);
+
+  useEffect(() => {
+    const saveData = async () => {
+      if (isSettingsFirstLoaded) {
+        await saveSettings(settings);
+      }
+    };
+    saveData();
+  }, [settings, isSettingsFirstLoaded]);
 
   const LAP_MINUTES =
     pomodoroStatus === PomodoroStatus.Focus
@@ -222,6 +254,8 @@ export default function HomePage(props: any) {
         ? usedLongBreakMinutes
         : usedShortBreakMinutes;
   const remainingSeconds = LAP_MINUTES * 60 - elapsedSeconds;
+
+  if (!isSettingsFirstLoaded) return;
 
   return (
     <Animated.View
@@ -243,14 +277,19 @@ export default function HomePage(props: any) {
             if (isSettingOpen) {
               setIsSettingOpen(false);
             } else {
-              setIsBackgroundSoundOn(!isBackgroundSoundOn);
+              setSettings((prev) => {
+                return {
+                  ...prev,
+                  isBackgroundSoundEnabled: !prev.isBackgroundSoundEnabled,
+                };
+              });
             }
           }}
           className="z-10 mr-1 flex w-12 flex-col items-center"
         >
           <View>
             <MaterialCommunityIcons
-              name={isBackgroundSoundOn ? "music" : "music-off"}
+              name={settings.isBackgroundSoundEnabled ? "music" : "music-off"}
               color="#FFFFFF"
               size={34}
             />
@@ -265,14 +304,23 @@ export default function HomePage(props: any) {
             if (isSettingOpen) {
               setIsSettingOpen(false);
             } else {
-              setIsNotificationSoundOn(!isNotificationSoundOn);
+              setSettings((prev) => {
+                return {
+                  ...prev,
+                  isNotificationSoundEnabled: !prev.isNotificationSoundEnabled,
+                };
+              });
             }
           }}
           className="z-10 flex w-12 flex-col items-start"
         >
           <View className="ml-[2px]">
             <FontAwesomeIcon
-              name={isNotificationSoundOn ? "volume-high" : "volume-xmark"}
+              name={
+                settings.isNotificationSoundEnabled
+                  ? "volume-high"
+                  : "volume-xmark"
+              }
               color="#FFFFFF"
               size={32}
             />
@@ -292,12 +340,8 @@ export default function HomePage(props: any) {
       </View>
       {isSettingOpen && (
         <SettingView
-          focusMinutes={focusMinutes}
-          setFocusMinutes={setFocusMinutes}
-          shortBreakMinutes={shortBreakMinutes}
-          setShortBreakMinutes={setShortBreakMinutes}
-          longBreakMinutes={longBreakMinutes}
-          setLongBreakMinutes={setLongBreakMinutes}
+          settings={settings}
+          setSettings={setSettings}
           setIsOpen={setIsSettingOpen}
           transitThemeColor={transitThemeColor}
         />
@@ -312,7 +356,7 @@ export default function HomePage(props: any) {
       <View className="flex flex-row justify-center">
         <Text className="w-36 py-2 text-right font-dm-bold text-8xl tracking-widest text-white">
           {pomodoroStatus === PomodoroStatus.None
-            ? ("0" + String(focusMinutes)).slice(-2)
+            ? ("0" + String(settings.focusMinutes)).slice(-2)
             : ("0" + String(Math.floor(remainingSeconds / 60))).slice(-2)}
         </Text>
         <Text className="w-8 py-2 text-center font-dm-bold text-8xl text-white">

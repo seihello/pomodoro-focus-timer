@@ -1,56 +1,63 @@
 import React, { useState } from "react";
 import { Animated, View } from "react-native";
+import Settings from "../../types/settings.type";
 import TransitionButton from "../ui/transition-button";
 import SettingInput from "./setting-input";
 
 type Props = {
-  focusMinutes: number;
-  setFocusMinutes: (value: number) => void;
-  shortBreakMinutes: number;
-  setShortBreakMinutes: (value: number) => void;
-  longBreakMinutes: number;
-  setLongBreakMinutes: (value: number) => void;
+  settings: Settings;
+  setSettings: React.Dispatch<React.SetStateAction<Settings>>;
   setIsOpen: (value: boolean) => void;
   transitThemeColor: Animated.Value;
 };
 
 export default function SettingView({
-  focusMinutes,
-  setFocusMinutes,
-  shortBreakMinutes,
-  setShortBreakMinutes,
-  longBreakMinutes,
-  setLongBreakMinutes,
+  settings,
+  setSettings,
   setIsOpen,
   transitThemeColor,
 }: Props) {
   const [tempFocusMinutes, setTempFocusMinutes] = useState<number | "">(
-    focusMinutes,
+    settings.focusMinutes,
   );
   const [tempShortBreakMinutes, setTempShortBreakMinutes] = useState<
     number | ""
-  >(shortBreakMinutes);
+  >(settings.shortBreakMinutes);
   const [tempLongBreakMinutes, setTempLongBreakMinutes] = useState<number | "">(
-    longBreakMinutes,
+    settings.longBreakMinutes,
   );
 
   const [rootWidth, setRootWidth] = useState(0);
   const [rootHeight, setRootHeight] = useState(0);
 
   const onSubmitButtonPressed = () => {
-    setFocusMinutes(
-      tempFocusMinutes === "" || tempFocusMinutes <= 0 ? 25 : tempFocusMinutes,
-    );
-    setShortBreakMinutes(
-      tempShortBreakMinutes === "" || tempShortBreakMinutes <= 0
-        ? 5
-        : tempShortBreakMinutes,
-    );
-    setLongBreakMinutes(
-      tempLongBreakMinutes === "" || tempLongBreakMinutes <= 0
-        ? 15
-        : tempLongBreakMinutes,
-    );
+    setSettings((prev) => {
+      return {
+        ...prev,
+        focusMinutes:
+          tempFocusMinutes === "" || tempFocusMinutes <= 0
+            ? 25
+            : tempFocusMinutes,
+      };
+    });
+    setSettings((prev) => {
+      return {
+        ...prev,
+        shortBreakMinutes:
+          tempShortBreakMinutes === "" || tempShortBreakMinutes <= 0
+            ? 5
+            : tempShortBreakMinutes,
+      };
+    });
+    setSettings((prev) => {
+      return {
+        ...prev,
+        longBreakMinutes:
+          tempLongBreakMinutes === "" || tempLongBreakMinutes <= 0
+            ? 15
+            : tempLongBreakMinutes,
+      };
+    });
 
     setIsOpen(false);
   };
